@@ -132,14 +132,8 @@ class WorkingUpworkScraper_NoCookie {
     console.log("Looking for job elements...");
     const selectors = [
       'article[data-test="jobTile"]',
-      'article[data-ev-label="search_results_impression"]',
-      'section[data-test="JobTile"]',
       ".job-tile",
-      ".air3-card.job-tile",
-      'div[data-test*="job"]',
-      'article.job-tile',
-      'div.up-card-section',
-      'section.up-card-section',
+      ".air3-card.job-tile"
     ];
     for (const selector of selectors) {
       try {
