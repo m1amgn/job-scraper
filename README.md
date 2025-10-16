@@ -136,6 +136,55 @@ curl -X POST http://localhost:3000/scrape \
 ]
 ```
 
+## 🍪 Using Cookies to Bypass Cloudflare
+
+When running on a VPS/server, Cloudflare may block requests from datacenter IPs. Using cookies from a real browser session helps bypass this protection.
+
+### Quick Start with Cookies
+
+**Option 1: Visual Cookie Exporter (Easiest)**
+
+1. Open `export-cookies.html` in your browser
+2. Navigate to [Upwork Job Search](https://www.upwork.com/nx/search/jobs/) and log in
+3. Click "Export Cookies" button on the export page
+4. Save the JSON output to `cookies.json`
+
+**Option 2: Browser Extension**
+
+1. Install [Cookie-Editor](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) for Chrome
+2. Go to Upwork and log in
+3. Click extension → Export → JSON format
+4. Save as `cookies.json`
+
+### Using Cookies with API
+
+```bash
+curl -X POST http://your-server:3000/scrape \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://www.upwork.com/nx/search/jobs/?q=python&sort=recency",
+    "cookies": [
+      {
+        "name": "oauth2_global_js_token",
+        "value": "your-token-value",
+        "domain": ".upwork.com",
+        "path": "/",
+        "secure": true
+      }
+    ],
+    "maxJobs": 20
+  }'
+```
+
+### Testing with Cookies
+
+```bash
+# Use the included test script
+./test-with-cookies.sh python http://your-server:3000
+```
+
+📖 **For detailed instructions, see [COOKIES.md](COOKIES.md)**
+
 ## 🔧 Configuration
 
 ### Environment variables
