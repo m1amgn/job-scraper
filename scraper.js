@@ -1,5 +1,4 @@
-﻿// File: scraper.js
-const { connect } = require("puppeteer-real-browser");
+﻿const { connect } = require("puppeteer-real-browser");
 
 class WorkingUpworkScraper_NoCookie {
   constructor() {
@@ -11,17 +10,33 @@ class WorkingUpworkScraper_NoCookie {
     console.log("Initializing browser...");
     try {
       const { browser, page } = await connect({
-        headless: false,
+        headless: "new",
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
           "--disable-dev-shm-usage",
           "--disable-gpu",
+          "--disable-software-rasterizer",
+          "--disable-extensions",
+          "--disable-background-networking",
+          "--disable-default-apps",
+          "--disable-sync",
+          "--disable-translate",
+          "--hide-scrollbars",
+          "--metrics-recording-only",
+          "--mute-audio",
+          "--no-first-run",
+          "--safebrowsing-disable-auto-update",
+          "--window-size=1920,1080",
         ],
         fingerprint: true,
         turnstile: true,
         connectOption: {
-          defaultViewport: null,
+          defaultViewport: {
+            width: 1920,
+            height: 1080,
+            deviceScaleFactor: 1,
+          },
         },
       });
 
@@ -39,16 +54,33 @@ class WorkingUpworkScraper_NoCookie {
       }
 
       await this.page.setUserAgent(
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       );
 
-      console.log("Browser initialized");
+      await this.page.evaluateOnNewDocument(() => {
+        Object.defineProperty(navigator, 'webdriver', {
+          get: () => undefined,
+        });
+        
+        window.chrome = {
+          runtime: {},
+        };
+        
+        const originalQuery = window.navigator.permissions.query;
+        window.navigator.permissions.query = (parameters) => (
+          parameters.name === 'notifications' ?
+            Promise.resolve({ state: Notification.permission }) :
+            originalQuery(parameters)
+        );
+      });
+
+      console.log("Browser initialized in headless mode");
       return true;
     } catch (error) {
       console.error("Failed to initialize browser:", error.message);
       return false;
     }
-  } // ✅ properly closed init()
+  }
 
   async navigateToUpwork(targetUrl) {
     console.log(`Navigating to ${targetUrl}...`);
@@ -116,7 +148,7 @@ class WorkingUpworkScraper_NoCookie {
       }
     }
     console.log("No job elements found.");
-    await this.page.screenshot({ path: "debug_no_jobs.png", fullPage: true });
+    await this.page.screenshot({ path: `/tmp/debug_no_jobs_${Date.now()}.png`, fullPage: true });
     return { elements: [], selector: "none" };
   }
 
