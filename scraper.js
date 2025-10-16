@@ -132,8 +132,14 @@ class WorkingUpworkScraper_NoCookie {
     console.log("Looking for job elements...");
     const selectors = [
       'article[data-test="jobTile"]',
+      'article[data-ev-label="search_results_impression"]',
+      'section[data-test="JobTile"]',
       ".job-tile",
       ".air3-card.job-tile",
+      'div[data-test*="job"]',
+      'article.job-tile',
+      'div.up-card-section',
+      'section.up-card-section',
     ];
     for (const selector of selectors) {
       try {
@@ -148,7 +154,33 @@ class WorkingUpworkScraper_NoCookie {
       }
     }
     console.log("No job elements found.");
+    
+    // Диагностика: выводим структуру страницы
+    const bodyHTML = await this.page.evaluate(() => {
+      const body = document.body;
+      const articles = body.querySelectorAll('article');
+      const sections = body.querySelectorAll('section');
+      const divs = body.querySelectorAll('div[class*="card"], div[class*="tile"], div[class*="job"]');
+      return {
+        articleCount: articles.length,
+        sectionCount: sections.length,
+        cardDivCount: divs.length,
+        firstArticleClasses: articles[0]?.className || 'none',
+        firstSectionClasses: sections[0]?.className || 'none',
+        bodyClasses: body.className,
+      };
+    });
+    console.log('Page structure:', JSON.stringify(bodyHTML, null, 2));
+    
     await this.page.screenshot({ path: `/tmp/debug_no_jobs_${Date.now()}.png`, fullPage: true });
+    
+    // Сохраняем HTML для анализа
+    const html = await this.page.content();
+    const fs = require('fs');
+    const htmlPath = `/tmp/debug_page_${Date.now()}.html`;
+    fs.writeFileSync(htmlPath, html);
+    console.log(`HTML saved to: ${htmlPath}`);
+    
     return { elements: [], selector: "none" };
   }
 
