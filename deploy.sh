@@ -17,14 +17,6 @@ fi
 echo "📦 Stopping existing containers..."
 docker-compose down
 
-# Pull latest changes (if in git repo)
-if [ -d .git ]; then
-    echo "📥 Pulling latest changes..."
-    git pull
-else
-    echo "⚠️  Not a git repository, skipping git pull"
-fi
-
 # Build new image
 echo "🔨 Building Docker image..."
 docker-compose build --no-cache
