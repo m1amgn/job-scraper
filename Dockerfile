@@ -37,12 +37,17 @@ ENV CHROME_PATH=/usr/bin/chromium \
 
 WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
+
+# Install dependencies
 RUN npm ci --only=production
 
-COPY . .
+# Copy source code
+COPY src ./src
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# Run the application
+CMD ["node", "src/main.js"]
 

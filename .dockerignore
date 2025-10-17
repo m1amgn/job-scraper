@@ -1,11 +1,31 @@
+# Dependencies
 node_modules
 npm-debug.log
+
+# Git
 .git
 .gitignore
+
+# Environment
 .env
+.env.local
+env.example
+
+# Documentation
 *.md
+README.md
+CHANGELOG.md
+
+# Debug files
 debug_*.png
+debug_*.html
+
+# Docker files
 Dockerfile
 .dockerignore
 docker-compose.yml
+
+# Old files (if they still exist)
+server.js
+scraper.js
 

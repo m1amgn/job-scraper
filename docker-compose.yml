@@ -6,6 +6,9 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      # Optional: Add proxy to bypass Cloudflare (recommended for VPS)
+      # Format: http://username:password@proxy-server:port
+      # - PROXY_URL=http://user:pass@p.webshare.io:80
     restart: unless-stopped
     shm_size: '2gb'
     volumes:

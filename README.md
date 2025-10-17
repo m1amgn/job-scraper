@@ -98,6 +98,7 @@ Content-Type: application/json
 |-----------|------|----------|-------------|
 | `url` | string | Yes | Upwork search URL (must start with `https://www.upwork.com`) |
 | `cookies` | array | No | Array of cookies for authenticated session |
+| `proxy` | string | No | Proxy URL (e.g., `http://user:pass@proxy:port`) |
 | `maxJobs` | number | No | Maximum number of jobs (default: 10) |
 
 **Example request:**
@@ -159,6 +160,42 @@ ports:
   - "3000:3000"  # HOST_PORT:CONTAINER_PORT
 shm_size: '2gb'  # Shared memory for Chrome
 ```
+
+## 🌐 Using Proxy (Recommended for VPS)
+
+When running on a VPS, Cloudflare blocks datacenter IPs. Use a **residential proxy** to bypass this.
+
+### Quick Setup
+
+**1. Get a proxy** (recommended providers):
+
+**2. Configure proxy** in `docker-compose.yml`:
+
+```yaml
+environment:
+  - PROXY_URL=http://username:password@proxy-server:port
+```
+
+**3. Restart container:**
+
+```bash
+docker-compose down
+docker-compose up -d
+```
+
+### Alternative: Pass Proxy in Request
+
+```bash
+curl -X POST http://your-server:3000/scrape \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://www.upwork.com/nx/search/jobs/?q=python",
+    "proxy": "http://user:pass@proxy:port",
+    "maxJobs": 20
+  }'
+```
+
+📖 **For detailed proxy setup, see [PROXY.md](PROXY.md)**
 
 ## 🛠️ Scripts
 
@@ -232,7 +269,7 @@ Chrome consumes a lot of RAM. Solutions:
 shm_size: '4gb'
 ```
 
-2. **Add swap on server** (see DEPLOYMENT.md)
+2. **Add swap on server**
 
 3. **Reduce maxJobs** in requests
 
@@ -244,31 +281,14 @@ shm_size: '4gb'
 
 ## ⚠️ Important Notes
 
-### Legality
-
-- Scraping public data is in a gray area
-- Use for personal purposes, not commercial
-- Respect reasonable rate limits
-- Don't overload Upwork servers
-
 ### Performance
 
 - One request can take 30-60 seconds
 - Recommended no more than 5-10 requests per hour
 - Each request opens a new browser (resource intensive)
 
-### Security
-
-- Don't share cookies with third parties
-- Restrict API access (use API keys in production)
-- Configure firewall on server
-- Use HTTPS through reverse proxy (nginx)
 
 ## 🚀 VPS Deployment
-
-Detailed instructions in [DEPLOYMENT.md](./DEPLOYMENT.md)
-
-Quick version:
 
 ```bash
 # On server
@@ -312,38 +332,3 @@ docker-compose logs -f
 3. Commit changes
 4. Push to branch
 5. Create Pull Request
-
-## 📝 Changelog
-
-### v1.0.0 (2024-01-15)
-- First release
-- Headless mode for server usage
-- Docker support
-- Graceful shutdown
-- Anti-detection protection
-- Complete documentation
-
-## 📄 License
-
-ISC
-
-## 👤 Author
-
-Your Name
-
-## 🐛 Known Issues
-
-- Cloudflare may block headless browsers more often than regular ones
-- Requires a lot of RAM for multiple concurrent requests
-- Upwork HTML structure may change, requiring selector updates
-
-## 🔮 Planned Features
-
-- [ ] Browser pool for resource optimization
-- [ ] Task queue (Redis/Bull)
-- [ ] Result caching
-- [ ] PostgreSQL for history storage
-- [ ] RSS Feed integration
-- [ ] Webhook notifications
-- [ ] Rate limiting
-- [ ] API authentication
