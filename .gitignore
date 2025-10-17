@@ -1,4 +1,4 @@
 /node_modules
 .idea
-cookies.json
-*.cookies.json
+.env
+.env.local

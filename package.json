@@ -1,16 +1,24 @@
 {
-  "name": "upwork",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "upwork-scraper",
+  "version": "2.0.0",
+  "description": "Professional Upwork job scraper with Cloudflare bypass",
+  "main": "src/main.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "NODE_ENV=development node server.js",
+    "start": "node src/main.js",
+    "dev": "NODE_ENV=development node src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "upwork",
+    "scraper",
+    "puppeteer",
+    "cloudflare-bypass"
+  ],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "express": "^5.1.0",
     "puppeteer": "^24.17.0",
